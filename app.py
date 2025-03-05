@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import json
 from gdrive import upload_to_drive
 
-# Create or Load Data
+# Load or initialize data
+@st.cache_data
 def load_data():
     try:
         return pd.read_csv("finance_data.csv")
@@ -36,10 +36,12 @@ elif choice == "Record Transaction":
                                 columns=["Date", "Type", "Category", "Amount", "Description"])
         df = pd.concat([df, new_data], ignore_index=True)
         df.to_csv("finance_data.csv", index=False)
-        upload_to_drive("finance_data.csv", "finance_data_backup.csv")
-        st.success("Transaction Saved & Uploaded to Google Drive!")
+        try:
+            file_id = upload_to_drive("finance_data.csv", f"finance_data_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
+            st.success(f"Transaction Saved & Uploaded to Google Drive! File ID: {file_id}")
+        except Exception as e:
+            st.error(f"Failed to upload to Google Drive: {str(e)}")
 
 elif choice == "View Data":
     st.subheader("Transaction Records")
     st.write(df)
-

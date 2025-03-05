@@ -1,0 +1,4 @@
+financial-management-system/
+├── app.py             # Main Streamlit app
+├── gdrive.py          # Google Drive integration
+├── requirements.txt   # Dependencies
